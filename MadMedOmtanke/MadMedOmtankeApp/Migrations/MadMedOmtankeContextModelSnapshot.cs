@@ -3,18 +3,16 @@ using MadMedOmtankeApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
 namespace MadMedOmtankeApp.Migrations
 {
-    [DbContext(typeof(MadMedOmtankeAppContext))]
-    [Migration("20230308124832_mssql.local_migration_334")]
-    partial class mssqllocal_migration_334
+    [DbContext(typeof(MadMedOmtankeContext))]
+    partial class MadMedOmtankeContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,6 +20,23 @@ namespace MadMedOmtankeApp.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("EmployeeLibary.Models.Department", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Department", (string)null);
+                });
 
             modelBuilder.Entity("EmployeeLibary.Models.Employee", b =>
                 {
@@ -67,7 +82,24 @@ namespace MadMedOmtankeApp.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Employee");
+                    b.ToTable("Employee", (string)null);
+                });
+
+            modelBuilder.Entity("EmployeeLibary.Models.Position", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<string>("PositionName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Position", (string)null);
                 });
 #pragma warning restore 612, 618
         }

@@ -1,13 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using EmployeeLibary.Models;
+using MadMedOmtankeApp.Data;
 
-namespace MadMedOmtankeApp.Pages.Employee
+namespace MadMedOmtankeApp.Pages.EmployeePage
 {
     public class CreateModel : PageModel
     {
-        private readonly MadMedOmtankeApp.Data.MadMedOmtankeAppContext _context;
+        private readonly MadMedOmtankeApp.Data.MadMedOmtankeContext _context;
 
-        public CreateModel(MadMedOmtankeApp.Data.MadMedOmtankeAppContext context)
+        public CreateModel(MadMedOmtankeApp.Data.MadMedOmtankeContext context)
         {
             _context = context;
         }
@@ -18,13 +25,13 @@ namespace MadMedOmtankeApp.Pages.Employee
         }
 
         [BindProperty]
-        public EmployeeLibary.Models.Employee Employee { get; set; }
-
+        public Employee Employee { get; set; }
+        
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+          if (!ModelState.IsValid)
             {
                 return Page();
             }
