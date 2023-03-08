@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MadMedOmtankeApp", "MadMedO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeOverview", "EmployeeOverview\EmployeeOverview.csproj", "{AFBF4A88-4E51-4698-BC65-563077A6E71D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Employee", "Employee\Employee.csproj", "{5E63C1DB-CA55-4874-B799-B0FE7D984F91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{AFBF4A88-4E51-4698-BC65-563077A6E71D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFBF4A88-4E51-4698-BC65-563077A6E71D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFBF4A88-4E51-4698-BC65-563077A6E71D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E63C1DB-CA55-4874-B799-B0FE7D984F91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E63C1DB-CA55-4874-B799-B0FE7D984F91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E63C1DB-CA55-4874-B799-B0FE7D984F91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E63C1DB-CA55-4874-B799-B0FE7D984F91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
