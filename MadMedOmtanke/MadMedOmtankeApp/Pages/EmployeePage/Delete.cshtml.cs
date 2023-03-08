@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Employee.Models;
-using MadMedOmtankeApp.Data;
 
 namespace MadMedOmtankeApp.Pages.Employee
 {
@@ -20,7 +14,7 @@ namespace MadMedOmtankeApp.Pages.Employee
         }
 
         [BindProperty]
-      public Employee Employee { get; set; }
+        public EmployeeLibary.Models.Employee Employee { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -35,7 +29,7 @@ namespace MadMedOmtankeApp.Pages.Employee
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 Employee = employee;
             }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Employee.Models;
 
 namespace MadMedOmtankeApp.Data
 {
@@ -14,6 +13,6 @@ namespace MadMedOmtankeApp.Data
         {
         }
 
-        public DbSet<Employee.Models.Employee> Employee { get; set; } = default!;
+        public DbSet<EmployeeLibary.Models.Employee> Employee { get; set; } = default!;
     }
 }

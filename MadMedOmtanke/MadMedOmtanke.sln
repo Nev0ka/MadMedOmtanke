@@ -5,9 +5,9 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MadMedOmtankeApp", "MadMedOmtankeApp\MadMedOmtankeApp.csproj", "{B514FFDA-680C-4740-A33A-AF6214673592}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeOverview", "EmployeeOverview\EmployeeOverview.csproj", "{AFBF4A88-4E51-4698-BC65-563077A6E71D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployeeOverview", "EmployeeOverview\EmployeeOverview.csproj", "{AFBF4A88-4E51-4698-BC65-563077A6E71D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Employee", "Employee\Employee.csproj", "{5E63C1DB-CA55-4874-B799-B0FE7D984F91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployeeLibary", "Employee\EmployeeLibary.csproj", "{5E63C1DB-CA55-4874-B799-B0FE7D984F91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

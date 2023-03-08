@@ -1,4 +1,4 @@
-﻿namespace Employee.Models
+﻿namespace EmployeeLibary.Models
 {
     public class Department
     {
