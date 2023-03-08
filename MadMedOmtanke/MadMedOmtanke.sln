@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MadMedOmtankeApp", "MadMedOmtankeApp\MadMedOmtankeApp.csproj", "{B514FFDA-680C-4740-A33A-AF6214673592}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MadMedOmtankeApp", "MadMedOmtankeApp\MadMedOmtankeApp.csproj", "{B514FFDA-680C-4740-A33A-AF6214673592}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeOverview", "EmployeeOverview\EmployeeOverview.csproj", "{AFBF4A88-4E51-4698-BC65-563077A6E71D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{B514FFDA-680C-4740-A33A-AF6214673592}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B514FFDA-680C-4740-A33A-AF6214673592}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B514FFDA-680C-4740-A33A-AF6214673592}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFBF4A88-4E51-4698-BC65-563077A6E71D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFBF4A88-4E51-4698-BC65-563077A6E71D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFBF4A88-4E51-4698-BC65-563077A6E71D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFBF4A88-4E51-4698-BC65-563077A6E71D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
