@@ -1,9 +1,5 @@
 {
   "dependencies": {
-    "mssql1": {
-      "type": "mssql",
-      "connectionId": "ConnectionStrings:MadMedOmtankeContext"
-    },
     "mssql2": {
       "type": "mssql",
       "connectionId": "ConnectionStrings:MadMedOmtankeAppContext"
