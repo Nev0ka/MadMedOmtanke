@@ -1,3 +1,6 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using MadMedOmtankeApp.Data;
 namespace MadMedOmtankeApp
 {
     public class Program
@@ -5,6 +8,8 @@ namespace MadMedOmtankeApp
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<MadMedOmtankeContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("MadMedOmtankeContext") ?? throw new InvalidOperationException("Connection string 'MadMedOmtankeContext' not found.")));
 
             // Add services to the container.
             builder.Services.AddRazorPages();
