@@ -10,7 +10,9 @@
         public string FirmEmail { get; set; }
         public int PositionID { get; set; }
         public int DepartmentID { get; set; }
-        public string ClosetManager { get; set; }
+        public string? ClosetManager { get; set; }
         public string Skills { get; set; }
+        public string? PositionName { get; set; }
+        public string? DepartmentName { get; set; }
     }
 }

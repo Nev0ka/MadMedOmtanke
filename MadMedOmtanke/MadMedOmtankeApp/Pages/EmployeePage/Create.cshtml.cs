@@ -1,39 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using EmployeeLibary.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using EmployeeLibary.Models;
-using MadMedOmtankeApp.Data;
 
 namespace MadMedOmtankeApp.Pages.EmployeePage
 {
-    public class CreateModel : PageModel
+    public class CreateModel : EmployeeSelectlist
     {
-        private readonly MadMedOmtankeApp.Data.MadMedOmtankeContext _context;
+        private readonly Data.MadMedOmtankeContext _context;
+        internal static SelectList SelectedPosition { get; set; }
+        internal static SelectList SelectedDepartment { get; set; }
 
-        public CreateModel(MadMedOmtankeApp.Data.MadMedOmtankeContext context)
+        public CreateModel(Data.MadMedOmtankeContext context)
         {
             _context = context;
         }
 
-        public IActionResult OnGet()
-        {
-            return Page();
-        }
-
         [BindProperty]
         public Employee Employee { get; set; }
-        
+
+        public IActionResult OnGet()
+        {
+            PopulatePositionDropdownList(_context);
+            PopulateDepartmentDropdownList(_context);
+            SelectedPosition = PositionSL;
+            SelectedDepartment = DepartmentSL;
+            return Page();
+        }
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return Page();
+            }
+
+            foreach (var position in SelectedPosition)
+            {
+                if(Convert.ToInt32(position.Value)== Employee.PositionID)
+                {
+                    Employee.PositionName = position.Text;
+                    break;
+                }
+            }
+
+            foreach (var department in SelectedDepartment)
+            {
+                if (Convert.ToInt32(department.Value) == Employee.DepartmentID)
+                {
+                    Employee.DepartmentName = department.Text;
+                    break;
+                }
             }
 
             _context.Employee.Add(Employee);

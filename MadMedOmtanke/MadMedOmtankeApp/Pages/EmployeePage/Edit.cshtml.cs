@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using EmployeeLibary.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using EmployeeLibary.Models;
-using MadMedOmtankeApp.Data;
 
 namespace MadMedOmtankeApp.Pages.EmployeePage
 {
-    public class EditModel : PageModel
+    public class EditModel : EmployeeSelectlist
     {
         private readonly MadMedOmtankeApp.Data.MadMedOmtankeContext _context;
+        internal static SelectList SelectedPosition { get; set; }
+        internal static SelectList SelectedDepartment { get; set; }
 
         public EditModel(MadMedOmtankeApp.Data.MadMedOmtankeContext context)
         {
@@ -30,12 +27,16 @@ namespace MadMedOmtankeApp.Pages.EmployeePage
                 return NotFound();
             }
 
-            var employee =  await _context.Employee.FirstOrDefaultAsync(m => m.ID == id);
+            var employee = await _context.Employee.FirstOrDefaultAsync(m => m.ID == id);
             if (employee == null)
             {
                 return NotFound();
             }
             Employee = employee;
+            PopulatePositionDropdownList(_context);
+            PopulateDepartmentDropdownList(_context);
+            SelectedPosition = PositionSL;
+            SelectedDepartment = DepartmentSL;
             return Page();
         }
 
@@ -71,7 +72,7 @@ namespace MadMedOmtankeApp.Pages.EmployeePage
 
         private bool EmployeeExists(int id)
         {
-          return _context.Employee.Any(e => e.ID == id);
+            return _context.Employee.Any(e => e.ID == id);
         }
     }
 }

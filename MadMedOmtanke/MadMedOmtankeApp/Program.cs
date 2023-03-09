@@ -31,6 +31,15 @@ namespace MadMedOmtankeApp
                 app.UseMigrationsEndPoint();
             }
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                var context = services.GetRequiredService<MadMedOmtankeContext>();
+                context.Database.EnsureCreated();
+                DbInitializer.Initialze(context);
+            }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

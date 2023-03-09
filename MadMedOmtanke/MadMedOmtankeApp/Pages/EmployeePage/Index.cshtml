@@ -5,7 +5,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Employees</h1>
 
 <p>
     <a asp-page="Create">Create New</a>
@@ -14,25 +14,29 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].Initials)
+                <a asp-page="./Index" asp-route-sortOrder="@Model.InitialSort">
+                    @Html.DisplayNameFor(model => model.Employee[0].Initials)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].Name)
+                <a asp-page="./Index" asp-route-sortOrder="@Model.NameSort">
+                    @Html.DisplayNameFor(model => model.Employee[0].Name)
+                </a>
             </th>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.Employee[0].Address)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Employee[0].TlfNr)
-            </th>
+            </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.Employee[0].FirmEmail)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].PositionID)
+                @Html.DisplayNameFor(model => model.Employee[0].PositionName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].DepartmentID)
+                @Html.DisplayNameFor(model => model.Employee[0].DepartmentName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Employee[0].ClosetManager)
@@ -52,20 +56,20 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TlfNr)
-            </td>
+            </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.FirmEmail)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PositionID)
+                @Html.DisplayFor(modelItem => item.PositionName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DepartmentID)
+                @Html.DisplayFor(modelItem => item.DepartmentName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ClosetManager)

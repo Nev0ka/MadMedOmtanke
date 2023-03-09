@@ -1,32 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using EmployeeLibary.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using EmployeeLibary.Models;
-using MadMedOmtankeApp.Data;
 
 namespace MadMedOmtankeApp.Pages.EmployeePage
 {
     public class IndexModel : PageModel
     {
-        private readonly MadMedOmtankeApp.Data.MadMedOmtankeContext _context;
+        private readonly Data.MadMedOmtankeContext _context;
 
-        public IndexModel(MadMedOmtankeApp.Data.MadMedOmtankeContext context)
+        public IndexModel(Data.MadMedOmtankeContext context)
         {
             _context = context;
         }
 
-        public IList<Employee> Employee { get;set; } = default!;
+        public string InitialSort { get; set; }
+        public string NameSort { get; set; }
+        public Employee showEmployee { get; set; }
+        public Position showPosition { get; set; }
 
-        public async Task OnGetAsync()
+        public IList<Employee> Employee { get; set; }
+
+        public async Task OnGetAsync(string sortOrder)
         {
-            if (_context.Employee != null)
+            InitialSort = String.IsNullOrEmpty(sortOrder) ? "employeeId_desc" : "";
+            NameSort = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+
+            IQueryable<Employee> employeeIQ = from e in _context.Employee
+                                              select e;
+
+            switch (sortOrder)
             {
-                Employee = await _context.Employee.ToListAsync();
+                case "employeeId_desc":
+                    employeeIQ = employeeIQ.OrderByDescending(e => e.Initials);
+                    break;
+                case "name_desc":
+                    employeeIQ = employeeIQ.OrderByDescending(e => e.Name);
+                    break;
+                default:
+                    employeeIQ = employeeIQ.OrderBy(e => e.Initials);
+                    break;
             }
+
+            Employee = await employeeIQ.AsNoTracking().ToListAsync();
+
+            //if(showEmployee.PositionID == showPosition.ID)
+            //{
+            //    showEmployee.PositionID = showPosition.PositionName;
+            //}
         }
     }
 }

@@ -39,13 +39,17 @@
                 <span asp-validation-for="Employee.FirmEmail" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Employee.PositionID" class="control-label"></label>
-                <input asp-for="Employee.PositionID" class="form-control" />
+                <label asp-for="Employee.PositionName" class="control-label"></label>
+                <select asp-for="Employee.PositionID" class="form-control" asp-items="@Model.PositionSL">
+                    <option value=""> Select a position</option>
+                </select>
                 <span asp-validation-for="Employee.PositionID" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Employee.DepartmentID" class="control-label"></label>
-                <input asp-for="Employee.DepartmentID" class="form-control" />
+                <label asp-for="Employee.DepartmentName" class="control-label"></label>
+                <select asp-for="Employee.DepartmentID" class="form-control" asp-items="@Model.DepartmentSL">
+                    <option value=""> Select a department</option>
+                </select>
                 <span asp-validation-for="Employee.DepartmentID" class="text-danger"></span>
             </div>
             <div class="form-group">
