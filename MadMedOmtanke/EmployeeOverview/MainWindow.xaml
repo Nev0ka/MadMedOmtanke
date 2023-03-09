@@ -1,12 +1,31 @@
-﻿<Window x:Class="EmployeeOverview.MainWindow"
+﻿<Window x:Name="CreateEmployeeWindow" x:Class="EmployeeOverview.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EmployeeOverview"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Create Employee" Height="450" Width="800" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
     <Grid>
-
+        <GroupBox x:Name="EmployeeInfoGroupBox" HorizontalAlignment="Left" Height="204" Header="Employee infomation" Margin="10,76,0,0" VerticalAlignment="Top" Width="400">
+            <Grid x:Name="EmployeeInfoGrid">
+                <TextBox x:Name="NameTextBox" HorizontalAlignment="Left" Height="25" Margin="10,10,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" Width="168"/>
+                <TextBox x:Name="TelefonNumberTextBox" HorizontalAlignment="Left" Height="25" Margin="10,50,0,0" TextWrapping="Wrap" Text="TlfNr" VerticalAlignment="Top" Width="168"/>
+                <TextBox x:Name="AddressTextBox" HorizontalAlignment="Left" Height="25" Margin="10,90,0,0" TextWrapping="Wrap" Text="Address" VerticalAlignment="Top" Width="168"/>
+                <TextBox x:Name="SkillsTextBox" HorizontalAlignment="Left" Height="25" Margin="10,130,0,0" TextWrapping="Wrap" Text="Skills" VerticalAlignment="Top" Width="168"/>
+                <ComboBox x:Name="PositionComboBox" HorizontalAlignment="Left" Height="25" Margin="210,10,0,0" VerticalAlignment="Top" Width="168"/>
+                <ComboBox x:Name="DepartmentComboBox" HorizontalAlignment="Left" Height="25" Margin="210,50,0,0" VerticalAlignment="Top" Width="168"/>
+                <ComboBox x:Name="ClosestLeaderComboBox" HorizontalAlignment="Left" Height="25" Margin="210,90,0,0" VerticalAlignment="Top" Width="168"/>
+                <Button x:Name="CreateEmployeeButton" Content="Add/Create" HorizontalAlignment="Left" Height="25" Margin="210,130,0,0" VerticalAlignment="Top" Width="168"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="CreateEmployeeFromFileGroupBox" HorizontalAlignment="Left" Height="110" Header="Create employee from a file" Margin="76,305,0,0" VerticalAlignment="Top" Width="268">
+            <Grid x:Name="CreateEmployeeFromFileGrid">
+                <Button x:Name="BrowseButton" Content="Browse" HorizontalAlignment="Left" Height="28" Margin="193,48,0,0" VerticalAlignment="Top" Width="53" Click="BrowseButton_Click"/>
+                <Label x:Name="FileNameLabel" Content="Filename" HorizontalAlignment="Center" Height="30" Margin="0,6,0,0" VerticalAlignment="Top" Width="236"/>
+                <Button x:Name="AddEmployeesFromFileButton" Content="Add from file" HorizontalAlignment="Left" Height="30" Margin="9,47,0,0" VerticalAlignment="Top" Width="80" Click="AddEmployeesFromFileButton_Click"/>
+            </Grid>
+        </GroupBox>
+        <Label x:Name="ErrorLabel" Content="" HorizontalAlignment="Left" Height="66" Margin="10,10,0,0" VerticalAlignment="Top" Width="400" Foreground="Red"/>
     </Grid>
 </Window>
