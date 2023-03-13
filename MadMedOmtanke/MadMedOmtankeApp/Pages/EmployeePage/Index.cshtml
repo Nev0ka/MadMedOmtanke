@@ -7,9 +7,19 @@
 
 <h1>Employees</h1>
 
-<p>
+@*<p>
     <a asp-page="Create">Create New</a>
-</p>
+</p>*@
+<form asp-page="./Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name:
+            <input type="text" name="SearchString" value="@Model.CurrentFilter" />
+            <input type="submit" value="Search" class="btn btn-primary" /> |
+            <a asp-page="./Index">Back to full List</a>
+        </p>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
@@ -33,10 +43,14 @@
                 @Html.DisplayNameFor(model => model.Employee[0].FirmEmail)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].PositionName)
+                <a asp-page="./Index" asp-route-sortOrder="@Model.PositionSort">
+                    @Html.DisplayNameFor(model => model.Employee[0].PositionName)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].DepartmentName)
+                <a asp-page="./Index" asp-route-sortOrder="@Model.DepartmentSort">
+                    @Html.DisplayNameFor(model => model.Employee[0].DepartmentName)
+                </a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Employee[0].ClosetManager)
@@ -78,9 +92,9 @@
                 @Html.DisplayFor(modelItem => item.Skills)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
+                @*<a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |*@
+                <a asp-page="./Details" asp-route-id="@item.ID">Details</a>
+                @*<a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>*@
             </td>
         </tr>
 }
