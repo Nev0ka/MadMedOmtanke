@@ -18,8 +18,11 @@
                 <TextBox x:Name="SkillsTextBox" HorizontalAlignment="Left" Height="25" Margin="10,130,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="168" TextChanged="SkillsTextBox_TextChanged"/>
                 <Label x:Name="SkillsLabel" Content="Skills" HorizontalAlignment="Left" Height="25" Margin="10,126,0,0" VerticalAlignment="Top" Width="84" IsHitTestVisible="False"/>
                 <ComboBox x:Name="PositionComboBox" HorizontalAlignment="Left" Height="25" Margin="210,10,0,0" VerticalAlignment="Top" Width="168" SelectionChanged="PositionComboBox_SelectionChanged"/>
+                <Label x:Name="PositionLabel" Content="Position" HorizontalAlignment="Left" Height="25" Margin="210,8,0,0" VerticalAlignment="Top" Width="84" IsHitTestVisible="False"/>
                 <ComboBox x:Name="DepartmentComboBox" HorizontalAlignment="Left" Height="25" Margin="210,50,0,0" VerticalAlignment="Top" Width="168" SelectionChanged="DepartmentComboBox_SelectionChanged"/>
-                <ComboBox x:Name="ClosestLeaderComboBox" HorizontalAlignment="Left" Height="25" Margin="210,90,0,0" VerticalAlignment="Top" Width="168"/>
+                <Label x:Name="DepartmentLabel" Content="Department" HorizontalAlignment="Left" Height="25" Margin="210,48,0,0" VerticalAlignment="Top" Width="84" IsHitTestVisible="False"/>
+                <ComboBox x:Name="ClosestLeaderComboBox" HorizontalAlignment="Left" Height="25" Margin="210,90,0,0" VerticalAlignment="Top" Width="168" SelectionChanged="ClosestLeaderComboBox_SelectionChanged"/>
+                <Label x:Name="ClosestLeaderLabel" Content="ClosestLeader" HorizontalAlignment="Left" Height="26" Margin="210,89,0,0" VerticalAlignment="Top" Width="84" IsHitTestVisible="False"/>
                 <Button x:Name="CreateEmployeeButton" Content="Add/Create" HorizontalAlignment="Left" Height="25" Margin="210,130,0,0" VerticalAlignment="Top" Width="168" Click="CreateEmployeeButton_Click"/>
             </Grid>
         </GroupBox>

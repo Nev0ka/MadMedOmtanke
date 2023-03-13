@@ -1,14 +1,15 @@
 ﻿
 using EmployeeLibary.Models;
 using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Animation;
+using System.Windows.Media;
 
 namespace EmployeeOverview
 {
@@ -34,17 +35,14 @@ namespace EmployeeOverview
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog();
-            dialog.FileName = "Document"; // Default file name
-            dialog.DefaultExt = ".csv"; // Default file extension
-            dialog.Filter = "CSV (.csv)|*.csv"; // Filter files by extension
+            dialog.FileName = "Document";
+            dialog.DefaultExt = ".csv";
+            dialog.Filter = "CSV (.csv)|*.csv";
 
-            // Show open file dialog box
             bool? result = dialog.ShowDialog();
 
-            // Process open file dialog box results
             if (result == true)
             {
-                // Open document
                 _filename = dialog.FileName;
                 FileNameLabel.Content = Path.GetFileName(_filename);
             }
@@ -56,7 +54,30 @@ namespace EmployeeOverview
             {
                 return;
             }
-            string[] FileContent = File.ReadAllLines(_filename);
+            //string[] FileContent = File.ReadAllLines(_filename, Encoding.GetEncoding("iso-8859-1"));
+            string[] FileContent = File.ReadAllLines(_filename, Encoding.Latin1);
+            bool FirstLine = true;
+            foreach (string line in FileContent)
+            {
+                if (FirstLine)
+                {
+                    FirstLine = false;
+                    continue;
+                }
+                var spiltLine = line.Split(';');
+                Employee employee = new();
+                employee.Name = spiltLine[0].Trim();
+                employee.TlfNr = spiltLine[1].Trim();
+                employee.Address = spiltLine[2].Trim();
+                employee.PositionName = spiltLine[3].Trim();
+                employee.PositionID = Position.First(x => x.Value == employee.PositionName).Key;
+                employee.DepartmentName = spiltLine[4].Trim();
+                employee.DepartmentID = Department.First(x => x.Value == employee.DepartmentName).Key;
+                employee.ClosetManager = spiltLine[5].Trim();
+                employee.FirmEmail = MakeFirmMail(employee.Name);
+                employee.Initials = MakeInitials(employee.Name);
+                WriteEmployeeToDataBase(employee);
+            }
         }
 
         private bool GetDepartments()
@@ -100,32 +121,33 @@ namespace EmployeeOverview
                 }
             }
 
-            if (DepartmentComboBox.SelectedItem != null && PositionComboBox.SelectedItem != null)
-            {
-                closestLeader.Clear();
-                var listOfManagers = EmployeeListForStartup.Where(x => x.PositionName == PositionComboBox.SelectedItem.ToString() && x.DepartmentName == DepartmentComboBox.SelectedItem.ToString());
-                foreach (var employee in listOfManagers)
-                {
-                    string nameAndPosition = $"{employee.Name} - {employee.PositionName} - {employee.DepartmentName}";
-                    closestLeader.Add(employee.ID, nameAndPosition);
-                }
-            }
+            //if (DepartmentComboBox.SelectedItem != null && PositionComboBox.SelectedItem != null)
+            //{
+            //    closestLeader.Clear();
+            //    var listOfManagers = EmployeeListForStartup.Where(x => x.PositionName == PositionComboBox.SelectedItem.ToString() && x.DepartmentName == DepartmentComboBox.SelectedItem.ToString());
+            //    foreach (var employee in listOfManagers)
+            //    {
+            //        string nameAndPosition = $"{employee.Name} - {employee.PositionName} - {employee.DepartmentName}";
+            //        closestLeader.Add(employee.ID, nameAndPosition);
+            //    }
+            //}
 
-            else if (PositionComboBox.SelectedItem != null)
-            {
-                closestLeader.Clear();
-                var listOfManagers = EmployeeListForStartup.Where(x => x.PositionName == PositionComboBox.SelectedItem.ToString());
-                foreach (var employee in listOfManagers)
-                {
-                    string nameAndPosition = $"{employee.Name} - {employee.PositionName} - {employee.DepartmentName}";
-                    closestLeader.Add(employee.ID, nameAndPosition);
-                }
-            }
+            //else if (PositionComboBox.SelectedItem != null)
+            //{
+            //    closestLeader.Clear();
+            //    var listOfManagers = EmployeeListForStartup.Where(x => x.PositionName == PositionComboBox.SelectedItem.ToString());
+            //    foreach (var employee in listOfManagers)
+            //    {
+            //        string nameAndPosition = $"{employee.Name} - {employee.PositionName} - {employee.DepartmentName}";
+            //        closestLeader.Add(employee.ID, nameAndPosition);
+            //    }
+            //}
 
-            else if (DepartmentComboBox.SelectedItem != null)
+            if (DepartmentComboBox.SelectedItem != null)
             {
                 closestLeader.Clear();
                 var listOfManagers = EmployeeListForStartup.Where(x => x.DepartmentName == DepartmentComboBox.SelectedItem.ToString());
+                listOfManagers = listOfManagers.Where(x => x.PositionName.Equals("Manager", StringComparison.OrdinalIgnoreCase));
                 foreach (var employee in listOfManagers)
                 {
                     string nameAndPosition = $"{employee.Name} - {employee.PositionName} - {employee.DepartmentName}";
@@ -133,7 +155,7 @@ namespace EmployeeOverview
                 }
             }
 
-            else if (DepartmentComboBox.SelectedItem == null && PositionComboBox.SelectedItem == null && closestLeader.Count == 0)
+            else if (DepartmentComboBox.SelectedItem == null && closestLeader.Count == 0)
             {
                 closestLeader.Clear();
                 var listOfManagers = EmployeeListForStartup;
@@ -143,6 +165,16 @@ namespace EmployeeOverview
                     closestLeader.Add(employee.ID, nameAndPosition);
                 }
             }
+            //else if (DepartmentComboBox.SelectedItem == null && PositionComboBox.SelectedItem == null && closestLeader.Count == 0)
+            //{
+            //    closestLeader.Clear();
+            //    var listOfManagers = EmployeeListForStartup;
+            //    foreach (var employee in listOfManagers)
+            //    {
+            //        string nameAndPosition = $"{employee.Name} - {employee.PositionName} - {employee.DepartmentName}";
+            //        closestLeader.Add(employee.ID, nameAndPosition);
+            //    }
+            //}
 
 
             if (closestLeader.Count == 0)
@@ -151,6 +183,14 @@ namespace EmployeeOverview
             }
 
             ClosestLeaderComboBox.Items.Clear();
+            ClosestLeaderComboBox.Items.Add("None");
+            if (PositionComboBox.SelectedItem != null)
+            {
+                if (PositionComboBox.SelectedItem.ToString().Equals("Manager", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
             foreach (var ClosestLeader in closestLeader.Values)
             {
                 ClosestLeaderComboBox.Items.Add(ClosestLeader);
@@ -160,6 +200,7 @@ namespace EmployeeOverview
 
         private void FillDropdowns()
         {
+            ErrorLabel.Foreground = Brushes.Red;
             ErrorLabel.Content = string.Empty;
             if (!GetPositions())
             {
@@ -177,6 +218,7 @@ namespace EmployeeOverview
 
         private void CreateEmployeeButton_Click(object sender, RoutedEventArgs e)
         {
+            ErrorLabel.Foreground = Brushes.Red;
             string name = NameTextBox.Text.Trim();
             string tlfNr = TelefonNumberTextBox.Text.Trim();
             string address = AddressTextBox.Text.Trim();
@@ -220,11 +262,29 @@ namespace EmployeeOverview
                 return;
             }
 
-            if (closestLeader.Length == 0 || closestLeader == string.Empty || closestLeader == " ")
+            if (postion.Equals("Manager", StringComparison.OrdinalIgnoreCase) && closestLeader.Equals("None", StringComparison.OrdinalIgnoreCase))
+            {
+                closestLeader = "God";    //Need to find out what to put here.
+            }
+
+            if (closestLeader.Length == 0 || closestLeader == string.Empty || closestLeader == " " || closestLeader.Equals("None", StringComparison.OrdinalIgnoreCase))
             {
                 ErrorLabel.Content = "Please select a Closest leader";
                 return;
             }
+
+            Employee.Name = name;
+            Employee.Address = address;
+            Employee.TlfNr = tlfNr;
+            Employee.Skills = skills;
+            Employee.PositionID = Position.First(x => x.Value == postion).Key;
+            Employee.PositionName = postion;
+            Employee.DepartmentID = Department.First(x => x.Value == department).Key;
+            Employee.DepartmentName = department;
+            Employee.ClosetManager = closestLeader.Split("-")[0].Trim();
+            Employee.Initials = MakeInitials(Employee.Name);
+            Employee.FirmEmail = MakeFirmMail(Employee.Name);
+            WriteEmployeeToDataBase(Employee);
         }
 
         private void NameTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -345,32 +405,90 @@ namespace EmployeeOverview
                     position.ID = dataReader.GetInt32(0);
                     position.PositionName = dataReader.GetString(1);
                     Position.Add(position.ID, position.PositionName);
-
                 }
             }
             return;
         }
 
+        private void WriteEmployeeToDataBase(Employee employee)
+        {
+            using (SqlConnection conn = new(connectionString))
+            {
+                string Query = $"EXEC [dbo].[CreateEmployee] @Initials = '{employee.Initials}',@Name = '{employee.Name}',@Address = '{employee.Address}',@TlfNr = '{employee.TlfNr}',@FirmEmail = '{employee.FirmEmail}',@PositionID = '{employee.PositionID}',@DepartmentID = '{employee.DepartmentID}',@ClosetManager = '{employee.ClosetManager}',@Skills = '{employee.Skills}', @PositionName = '{employee.PositionName}', @DepartmentName = '{employee.DepartmentName}'";
+                SqlCommand command = new(Query, conn);
+                conn.Open();
+                command.ExecuteNonQuery();
+                conn.Close();
+            }
+
+            ErrorLabel.Foreground = Brushes.Green;
+            ErrorLabel.Content = "Employee was added to database";
+        }
+
         private void PositionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GetClosestLeader();
+            PositionLabel.Content = string.Empty;
         }
 
         private void DepartmentComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            DepartmentLabel.Content = string.Empty;
             GetClosestLeader();
         }
 
-        //public void WriteProductToDatabase()
-        //{
-        //    using (SqlConnection conn = new(connectionString))
-        //    {
-        //        string Query = $"INSERT INTO [dbo].[Product]([Title],[Type],[Stock],[ProductID]) VALUES ('{Product.Title}','{Product.Type}','{Product.Stock}','{Product.ProductID}')";
-        //        SqlCommand command = new(Query, conn);
-        //        conn.Open();
-        //        command.ExecuteNonQuery();
-        //        conn.Close();
-        //    }
-        //}
+        private string GetTwoFirstLetters(string name)
+        {
+            string Result = string.Empty;
+            foreach (char Letter in name)
+            {
+                Result += Letter.ToString();
+                if (Result.Length == 2)
+                {
+                    break;
+                }
+            }
+            return Result;
+        }
+
+        private string MakeInitials(string name)
+        {
+            if (name == null || name == string.Empty)
+            {
+                return string.Empty;
+            }
+
+            string initials = string.Empty;
+
+            if (name.Split(" ").Length == 1)
+            {
+                if (name.Length >= 4)
+                {
+                    int length = name.Length;
+                    string test = name[length - 2].ToString() + name[length - 1];
+                    initials = $"{GetTwoFirstLetters(name)}{GetTwoFirstLetters(test)}";
+                    return initials;
+                }
+                else
+                {
+                    return name;
+                }
+            }
+
+            string[] names = name.Split(" ");
+            initials += $"{GetTwoFirstLetters(names[0])}{GetTwoFirstLetters(names[names.Length - 1])}";
+
+            return initials.ToUpper();
+        }
+
+        private string MakeFirmMail(string name)
+        {
+            var nameSpilt = name.Split(" ");
+            return $"{name.ToCharArray()[0]}{nameSpilt[nameSpilt.Length - 1]}@MadMedOmtanke.dk";
+        }
+
+        private void ClosestLeaderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ClosestLeaderLabel.Content = string.Empty;
+        }
     }
 }
