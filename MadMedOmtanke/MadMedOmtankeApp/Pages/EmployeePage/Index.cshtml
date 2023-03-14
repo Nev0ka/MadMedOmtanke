@@ -44,12 +44,12 @@
             </th>
             <th>
                 <a asp-page="./Index" asp-route-sortOrder="@Model.PositionSort">
-                    @Html.DisplayNameFor(model => model.Employee[0].PositionName)
+                    @Html.DisplayNameFor(model => model.position.PositionName)
                 </a>
-            </th>
+            </th>  
             <th>
                 <a asp-page="./Index" asp-route-sortOrder="@Model.DepartmentSort">
-                    @Html.DisplayNameFor(model => model.Employee[0].DepartmentName)
+                    @Html.DisplayNameFor(model => model.department.Location)
                 </a>
             </th>
             <th>
@@ -80,10 +80,10 @@
                 @Html.DisplayFor(modelItem => item.FirmEmail)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PositionName)
+                @Html.DisplayFor(modelItem => Model.Positions.First(x => x.ID == item.PositionID).PositionName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DepartmentName)
+                    @Html.DisplayFor(modelItem => Model.Departments.First(x => x.ID == item.DepartmentID).Location)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ClosetManager)

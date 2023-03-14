@@ -17,6 +17,8 @@ namespace MadMedOmtankeApp.Pages.EmployeePage
 
         [BindProperty]
         public Employee Employee { get; set; }
+        public Position Position { get; set; }
+        public Department Department { get; set; }
 
         public IActionResult OnGet()
         {
@@ -39,7 +41,7 @@ namespace MadMedOmtankeApp.Pages.EmployeePage
             {
                 if(Convert.ToInt32(position.Value)== Employee.PositionID)
                 {
-                    Employee.PositionName = position.Text;
+                    Position.PositionName = position.Text;
                     break;
                 }
             }
@@ -48,7 +50,7 @@ namespace MadMedOmtankeApp.Pages.EmployeePage
             {
                 if (Convert.ToInt32(department.Value) == Employee.DepartmentID)
                 {
-                    Employee.DepartmentName = department.Text;
+                    Department.Location = department.Text;
                     break;
                 }
             }

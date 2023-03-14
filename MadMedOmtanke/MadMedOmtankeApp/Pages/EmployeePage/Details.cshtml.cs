@@ -15,6 +15,8 @@ namespace MadMedOmtankeApp.Pages.EmployeePage
         }
 
         public Employee Employee { get; set; }
+        public Department Department { get; set; }
+        public Position Position { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
