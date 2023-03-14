@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Create Employee" Height="450" Width="800" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
     <Grid x:Name="CreateEmployeeGrid">
-        <GroupBox x:Name="EmployeeInfoGroupBox" HorizontalAlignment="Left" Height="204" Header="Employee infomation" Margin="10,76,0,0" VerticalAlignment="Top" Width="400">
+        <GroupBox x:Name="EmployeeInfoGroupBox" HorizontalAlignment="Left" Height="204" Header="Employee infomation" Margin="10,40,0,0" VerticalAlignment="Top" Width="400">
             <Grid x:Name="EmployeeInfoGrid">
                 <TextBox x:Name="NameTextBox" HorizontalAlignment="Left" Height="25" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="168" TextChanged="NameTextBox_TextChanged"/>
                 <Label x:Name="NameLabel" Content="Name" HorizontalAlignment="Left" Height="25" Margin="10,7,0,0" VerticalAlignment="Top" Width="84" IsHitTestVisible="False"/>
@@ -22,17 +22,16 @@
                 <ComboBox x:Name="DepartmentComboBox" HorizontalAlignment="Left" Height="25" Margin="210,50,0,0" VerticalAlignment="Top" Width="168" SelectionChanged="DepartmentComboBox_SelectionChanged"/>
                 <Label x:Name="DepartmentLabel" Content="Department" HorizontalAlignment="Left" Height="25" Margin="210,48,0,0" VerticalAlignment="Top" Width="84" IsHitTestVisible="False"/>
                 <ComboBox x:Name="ClosestLeaderComboBox" HorizontalAlignment="Left" Height="25" Margin="210,90,0,0" VerticalAlignment="Top" Width="168" SelectionChanged="ClosestLeaderComboBox_SelectionChanged"/>
-                <Label x:Name="ClosestLeaderLabel" Content="ClosestLeader" HorizontalAlignment="Left" Height="26" Margin="210,89,0,0" VerticalAlignment="Top" Width="84" IsHitTestVisible="False"/>
+                <Label x:Name="ClosestLeaderLabel" Content="Closest manager" HorizontalAlignment="Left" Height="26" Margin="210,89,0,0" VerticalAlignment="Top" Width="115" IsHitTestVisible="False"/>
                 <Button x:Name="CreateEmployeeButton" Content="Add/Create" HorizontalAlignment="Left" Height="25" Margin="210,130,0,0" VerticalAlignment="Top" Width="168" Click="CreateEmployeeButton_Click"/>
             </Grid>
         </GroupBox>
-        <GroupBox x:Name="CreateEmployeeFromFileGroupBox" HorizontalAlignment="Left" Height="110" Header="Create employee from a file" Margin="76,305,0,0" VerticalAlignment="Top" Width="268">
-            <Grid x:Name="CreateEmployeeFromFileGrid">
-                <Button x:Name="BrowseButton" Content="Browse" HorizontalAlignment="Left" Height="28" Margin="193,48,0,0" VerticalAlignment="Top" Width="53" Click="BrowseButton_Click"/>
-                <Label x:Name="FileNameLabel" Content="Filename" HorizontalAlignment="Center" Height="30" Margin="0,6,0,0" VerticalAlignment="Top" Width="236"/>
-                <Button x:Name="AddEmployeesFromFileButton" Content="Add from file" HorizontalAlignment="Left" Height="30" Margin="9,47,0,0" VerticalAlignment="Top" Width="80" Click="AddEmployeesFromFileButton_Click"/>
-            </Grid>
-        </GroupBox>
-        <Label x:Name="ErrorLabel" Content="" HorizontalAlignment="Left" Height="66" Margin="10,10,0,0" VerticalAlignment="Top" Width="400" Foreground="Red"/>
+        <Menu x:Name="LogMenu" Height="25" VerticalAlignment="Top">
+            <MenuItem x:Name="FileMenuItem" Header="File" Height="25" Width="40">
+                <MenuItem x:Name="BrowseFileMenuItem" Header="Browse/Select File" Click="BrowseFileMenuItem_Click"/>
+                <MenuItem x:Name="AddEmployeeMenuItem" Header="Add Employees" Click="AddEmployeeMenuItem_Click"/>
+            </MenuItem>
+            <MenuItem x:Name="LogMenuItem" Header="Log" Height="25" Width="35"/>
+        </Menu>
     </Grid>
 </Window>

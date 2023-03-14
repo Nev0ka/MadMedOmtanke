@@ -1,15 +1,14 @@
-﻿
-using EmployeeLibary.Models;
+﻿using EmployeeLibary.Models;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace EmployeeOverview
 {
@@ -25,60 +24,12 @@ namespace EmployeeOverview
         }
 
         List<Employee> EmployeeListForStartup = new();
-        List<Employee> EmployeeList;
+        //List<Employee> EmployeeList;
         Employee Employee = new();
         Dictionary<int, string> Department = new();
         Dictionary<int, string> Position = new();
         Dictionary<int, string> closestLeader = new();
         private static string _filename = string.Empty;
-
-        private void BrowseButton_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new OpenFileDialog();
-            dialog.FileName = "Document";
-            dialog.DefaultExt = ".csv";
-            dialog.Filter = "CSV (.csv)|*.csv";
-
-            bool? result = dialog.ShowDialog();
-
-            if (result == true)
-            {
-                _filename = dialog.FileName;
-                FileNameLabel.Content = Path.GetFileName(_filename);
-            }
-        }
-
-        private void AddEmployeesFromFileButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_filename == string.Empty)
-            {
-                return;
-            }
-            //string[] FileContent = File.ReadAllLines(_filename, Encoding.GetEncoding("iso-8859-1"));
-            string[] FileContent = File.ReadAllLines(_filename, Encoding.Latin1);
-            bool FirstLine = true;
-            foreach (string line in FileContent)
-            {
-                if (FirstLine)
-                {
-                    FirstLine = false;
-                    continue;
-                }
-                var spiltLine = line.Split(';');
-                Employee employee = new();
-                employee.Name = spiltLine[0].Trim();
-                employee.TlfNr = spiltLine[1].Trim();
-                employee.Address = spiltLine[2].Trim();
-                employee.PositionName = spiltLine[3].Trim();
-                employee.PositionID = Position.First(x => x.Value == employee.PositionName).Key;
-                employee.DepartmentName = spiltLine[4].Trim();
-                employee.DepartmentID = Department.First(x => x.Value == employee.DepartmentName).Key;
-                employee.ClosetManager = spiltLine[5].Trim();
-                employee.FirmEmail = MakeFirmMail(employee.Name);
-                employee.Initials = MakeInitials(employee.Name);
-                WriteEmployeeToDataBase(employee);
-            }
-        }
 
         private bool GetDepartments()
         {
@@ -200,25 +151,27 @@ namespace EmployeeOverview
 
         private void FillDropdowns()
         {
-            ErrorLabel.Foreground = Brushes.Red;
-            ErrorLabel.Content = string.Empty;
+            string Error = string.Empty;
             if (!GetPositions())
             {
-                ErrorLabel.Content = "Failed to get Positions from database!\n";
+                Error = "Failed to get Positions from database!\n";
             }
             if (!GetDepartments())
             {
-                ErrorLabel.Content += "Failed to get departments from database!\n";
+                Error = "Failed to get departments from database!\n";
             }
             if (!GetClosestLeader())
             {
-                ErrorLabel.Content += "Failed to get closest leader from database!\n";
+                Error += "Failed to get closest leader from database!\n";
+            }
+            if (Error != string.Empty)
+            {
+                MessageBox.Show(Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void CreateEmployeeButton_Click(object sender, RoutedEventArgs e)
         {
-            ErrorLabel.Foreground = Brushes.Red;
             string name = NameTextBox.Text.Trim();
             string tlfNr = TelefonNumberTextBox.Text.Trim();
             string address = AddressTextBox.Text.Trim();
@@ -228,37 +181,37 @@ namespace EmployeeOverview
             string closestLeader = ClosestLeaderComboBox.SelectedItem.ToString().Trim();
             if (name.Length == 0 || name == string.Empty || name.ToCharArray().Any(x => char.IsDigit(x)) || name == " ")
             {
-                ErrorLabel.Content = "Please enter a Fullname";
+                MessageBox.Show("Please enter a Fullname", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             if (tlfNr.Length == 0 || tlfNr == string.Empty || tlfNr.ToCharArray().Any(x => char.IsLetter(x)) || tlfNr == " ")
             {
-                ErrorLabel.Content = "Please enter a Telefon Number";
+                MessageBox.Show("Please enter a Telefon Number", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             if (address.Length == 0 || address == string.Empty || address == " ")
             {
-                ErrorLabel.Content = "Please enter a Address";
+                MessageBox.Show("Please enter a Address", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             if (skills.Length == 0 || skills == string.Empty || skills.ToCharArray().Any(x => char.IsDigit(x)) || skills == " ")
             {
-                ErrorLabel.Content = "Please enter some Skills";
+                MessageBox.Show("Please enter some Skills", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             if (postion.Length == 0 || postion == string.Empty || postion == " ")
             {
-                ErrorLabel.Content = "Please select a Postion";
+                MessageBox.Show("Please select a Postion", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             if (department.Length == 0 || department == string.Empty || department == " ")
             {
-                ErrorLabel.Content = "Please select a Department";
+                MessageBox.Show("Please select a Department", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -269,7 +222,7 @@ namespace EmployeeOverview
 
             if (closestLeader.Length == 0 || closestLeader == string.Empty || closestLeader == " " || closestLeader.Equals("None", StringComparison.OrdinalIgnoreCase))
             {
-                ErrorLabel.Content = "Please select a Closest leader";
+                MessageBox.Show("Please select a Closest leader", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -278,13 +231,12 @@ namespace EmployeeOverview
             Employee.TlfNr = tlfNr;
             Employee.Skills = skills;
             Employee.PositionID = Position.First(x => x.Value == postion).Key;
-            Employee.PositionName = postion;
             Employee.DepartmentID = Department.First(x => x.Value == department).Key;
-            Employee.DepartmentName = department;
             Employee.ClosetManager = closestLeader.Split("-")[0].Trim();
             Employee.Initials = MakeInitials(Employee.Name);
             Employee.FirmEmail = MakeFirmMail(Employee.Name);
             WriteEmployeeToDataBase(Employee);
+            RestartPage();
         }
 
         private void NameTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -412,17 +364,28 @@ namespace EmployeeOverview
 
         private void WriteEmployeeToDataBase(Employee employee)
         {
+            int isAdded = 0;
             using (SqlConnection conn = new(connectionString))
             {
-                string Query = $"EXEC [dbo].[CreateEmployee] @Initials = '{employee.Initials}',@Name = '{employee.Name}',@Address = '{employee.Address}',@TlfNr = '{employee.TlfNr}',@FirmEmail = '{employee.FirmEmail}',@PositionID = '{employee.PositionID}',@DepartmentID = '{employee.DepartmentID}',@ClosetManager = '{employee.ClosetManager}',@Skills = '{employee.Skills}', @PositionName = '{employee.PositionName}', @DepartmentName = '{employee.DepartmentName}'";
+                string Query = $"EXEC @return_value =  [dbo].[CreateEmployee] @Initials = '{employee.Initials}',@Name = '{employee.Name}',@Address = '{employee.Address}',@TlfNr = '{employee.TlfNr}',@FirmEmail = '{employee.FirmEmail}',@PositionID = '{employee.PositionID}',@DepartmentID = '{employee.DepartmentID}',@ClosetManager = '{employee.ClosetManager}',@Skills = '{employee.Skills}'";
+                SqlParameter returnValue = new SqlParameter("return_value", SqlDbType.Int);
+                returnValue.Direction = ParameterDirection.Output;
                 SqlCommand command = new(Query, conn);
+                command.Parameters.Add(returnValue);
                 conn.Open();
                 command.ExecuteNonQuery();
+                isAdded = (int)returnValue.Value;
                 conn.Close();
             }
 
-            ErrorLabel.Foreground = Brushes.Green;
-            ErrorLabel.Content = "Employee was added to database";
+            if (isAdded == 1)
+            {
+                Log($"Employee {employee.Name} was added to database", "Green");
+            }
+            else if (isAdded <= 0)
+            {
+                Log($"Employee {employee.Name} wasn't added to database", "Red");
+            }
         }
 
         private void PositionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -489,6 +452,93 @@ namespace EmployeeOverview
         private void ClosestLeaderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ClosestLeaderLabel.Content = string.Empty;
+        }
+
+        private void RestartPage()
+        {
+            PositionComboBox.SelectedIndex = -1;
+            PositionLabel.Content = "Position";
+            DepartmentComboBox.SelectedIndex = -1;
+            DepartmentLabel.Content = "Department";
+            ClosestLeaderComboBox.SelectedIndex = -1;
+            ClosestLeaderLabel.Content = "Closet manager";
+            NameTextBox.Text = string.Empty;
+            TelefonNumberTextBox.Text = string.Empty;
+            AddressTextBox.Text = string.Empty;
+            SkillsTextBox.Text = string.Empty;
+        }
+        private void Log(string LogMessage, string color)
+        {
+            string filecontent = string.Empty;
+            string filepath = $"{Environment.CurrentDirectory}\\log\\EmployeeLog.txt";
+            if (!Directory.Exists(filepath))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(filepath));
+            }
+            
+            DateTime dateTime = DateTime.Now;
+            LogMessage += $"  ;{color};  {dateTime.ToString("dd/MMM/yyyy  HH:mm")} \n";
+            if (File.Exists(filepath))
+            {
+                filecontent = File.ReadAllText(filepath);
+            }
+            filecontent += LogMessage;
+            File.WriteAllText(filepath, filecontent);
+        }
+
+        private void BrowseFileMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog();
+            dialog.FileName = "Document";
+            dialog.DefaultExt = ".csv";
+            dialog.Filter = "CSV (.csv)|*.csv";
+
+            bool? result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                _filename = dialog.FileName;
+                //FileNameLabel.Content = Path.GetFileName(_filename);
+            }
+        }
+
+        private void AddEmployeeMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (_filename == string.Empty)
+            {
+                MessageBox.Show("Please select a file","Error",MessageBoxButton.OK,MessageBoxImage.Error);
+                return;
+            }
+            if (!File.Exists(_filename))
+            {
+                MessageBox.Show("Please select a file that exists", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            string[] FileContent = File.ReadAllLines(_filename, Encoding.Latin1);
+            bool FirstLine = true;
+            foreach (string line in FileContent)
+            {
+                if (FirstLine)
+                {
+                    FirstLine = false;
+                    continue;
+                }
+                var spiltLine = line.Split(';');
+                Employee employee = new();
+                employee.Name = spiltLine[0].Trim();
+                employee.TlfNr = spiltLine[1].Trim();
+                employee.Address = spiltLine[2].Trim();
+                employee.PositionName = spiltLine[3].Trim();
+                employee.PositionID = Position.First(x => x.Value == employee.PositionName).Key;
+                employee.DepartmentName = spiltLine[4].Trim();
+                employee.DepartmentID = Department.First(x => x.Value == employee.DepartmentName).Key;
+                employee.ClosetManager = spiltLine[5].Trim();
+                employee.Skills = spiltLine[6].Trim();
+                employee.FirmEmail = MakeFirmMail(employee.Name);
+                employee.Initials = MakeInitials(employee.Name);
+                WriteEmployeeToDataBase(employee);
+            }
+            MessageBox.Show("Button clicked","Succes",MessageBoxButton.OK,MessageBoxImage.Information);
         }
     }
 }
