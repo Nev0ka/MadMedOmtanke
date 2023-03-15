@@ -31,12 +31,11 @@ namespace EmployeeOverview
         {
             InitializeComponent();
             FillDropdowns();
-            if (File.Exists(logFilePath))
+            if (File.Exists(logging.logFilePath))
             {
                 UpdateLogList(ReadFile());
             }
         }
-        string logFilePath = $"{Environment.CurrentDirectory}\\log\\EmployeeLog.txt";
 
         List<Employee> EmployeeListForStartup = new();
         Employee Employee = new();

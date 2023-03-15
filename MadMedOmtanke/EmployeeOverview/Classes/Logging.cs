@@ -11,8 +11,14 @@ namespace EmployeeOverview.Classes
 {
     internal class Logging
     {
+        public string GetLogFilePath { get => logFilePath; }
         internal string logFilePath = $"{Environment.CurrentDirectory}\\log\\EmployeeLog.txt";
 
+        /// <summary>
+        /// Used to write a log in the log file.
+        /// </summary>
+        /// <param name="LogMessage">The thing you what to write down.</param>
+        /// <param name="color">Is color that the log needs to be.</param>
         internal void Log(string LogMessage, ColorsForLog color)
         {
             List<string> filecontent = new();
