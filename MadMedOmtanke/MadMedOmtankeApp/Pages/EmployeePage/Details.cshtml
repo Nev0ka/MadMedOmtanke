@@ -42,16 +42,16 @@
             @Html.DisplayFor(model => model.Employee.FirmEmail)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Position.PositionName)
+            @Html.DisplayNameFor(model => model.Positions[0].PositionName)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Position.PositionName)
+            @Html.DisplayFor(model => model.Positions.First(x => x.ID == model.Employee.PositionID).PositionName)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Department.Location)
+            @Html.DisplayNameFor(model => model.Departments[0].Location)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Department.Location)
+            @Html.DisplayFor(model => model.Departments.First(x => x.ID == model.Employee.DepartmentID).Location)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Employee.ClosetManager)

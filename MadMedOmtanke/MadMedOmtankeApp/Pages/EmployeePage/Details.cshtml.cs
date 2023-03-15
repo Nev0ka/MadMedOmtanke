@@ -15,8 +15,8 @@ namespace MadMedOmtankeApp.Pages.EmployeePage
         }
 
         public Employee Employee { get; set; }
-        public Department Department { get; set; }
-        public Position Position { get; set; }
+        public IList<Department> Departments { get; set; }
+        public IList<Position> Positions { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -33,6 +33,8 @@ namespace MadMedOmtankeApp.Pages.EmployeePage
             else
             {
                 Employee = employee;
+                Positions = _context.Position.ToList();
+                Departments = _context.Department.ToList();
             }
             return Page();
         }
