@@ -26,6 +26,8 @@ namespace EmployeeOverview
         List<Employee> EmployeeListForStartup = new();
         //List<Employee> EmployeeList;
         Employee Employee = new();
+        Position currentPosition = new();
+        Department currentDepartment = new();
         Dictionary<int, string> Department = new();
         Dictionary<int, string> Position = new();
         Dictionary<int, string> closestLeader = new();
@@ -97,11 +99,11 @@ namespace EmployeeOverview
             if (DepartmentComboBox.SelectedItem != null)
             {
                 closestLeader.Clear();
-                var listOfManagers = EmployeeListForStartup.Where(x => x.DepartmentName == DepartmentComboBox.SelectedItem.ToString());
-                listOfManagers = listOfManagers.Where(x => x.PositionName.Equals("Manager", StringComparison.OrdinalIgnoreCase));
+                var listOfManagers = EmployeeListForStartup.Where(x => x.DepartmentID == Department.First(x => x.Value == DepartmentComboBox.SelectedItem.ToString()).Key);
+                listOfManagers = listOfManagers.Where(x => Position.First(y=> y.Key == x.PositionID).Value.Equals("Manager", StringComparison.OrdinalIgnoreCase));
                 foreach (var employee in listOfManagers)
                 {
-                    string nameAndPosition = $"{employee.Name} - {employee.PositionName} - {employee.DepartmentName}";
+                    string nameAndPosition = $"{employee.Name} - {Position.First(x => x.Key == employee.PositionID).Value} - {Department.First(x => x.Key == employee.DepartmentID).Value}";
                     closestLeader.Add(employee.ID, nameAndPosition);
                 }
             }
@@ -112,7 +114,8 @@ namespace EmployeeOverview
                 var listOfManagers = EmployeeListForStartup;
                 foreach (var employee in listOfManagers)
                 {
-                    string nameAndPosition = $"{employee.Name} - {employee.PositionName} - {employee.DepartmentName}";
+                    string nameAndPosition = $"{employee.Name} - {Position.First(x => x.Key == employee.PositionID).Value} - {Department.First(x => x.Key == employee.DepartmentID).Value}";
+
                     closestLeader.Add(employee.ID, nameAndPosition);
                 }
             }
@@ -310,8 +313,8 @@ namespace EmployeeOverview
                     employee.PositionID = dataReader.GetInt32(1);
                     employee.ClosetManager = dataReader.GetString(2);
                     employee.Name = dataReader.GetString(3);
-                    employee.DepartmentName = dataReader.GetString(4);
-                    employee.PositionName = dataReader.GetString(5);
+                    currentDepartment.Location = dataReader.GetString(4);
+                    currentPosition.PositionName = dataReader.GetString(5);
                     employee.ID = dataReader.GetInt32(6);
                     EmployeeListForStartup.Add(employee);
                 }
@@ -528,10 +531,10 @@ namespace EmployeeOverview
                 employee.Name = spiltLine[0].Trim();
                 employee.TlfNr = spiltLine[1].Trim();
                 employee.Address = spiltLine[2].Trim();
-                employee.PositionName = spiltLine[3].Trim();
-                employee.PositionID = Position.First(x => x.Value == employee.PositionName).Key;
-                employee.DepartmentName = spiltLine[4].Trim();
-                employee.DepartmentID = Department.First(x => x.Value == employee.DepartmentName).Key;
+                //employee.PositionName = spiltLine[3].Trim();
+                employee.PositionID = Position.First(x => x.Value == spiltLine[3].Trim()).Key;
+                //employee.DepartmentName = spiltLine[4].Trim();
+                employee.DepartmentID = Department.First(x => x.Value == spiltLine[4].Trim()).Key;
                 employee.ClosetManager = spiltLine[5].Trim();
                 employee.Skills = spiltLine[6].Trim();
                 employee.FirmEmail = MakeFirmMail(employee.Name);
