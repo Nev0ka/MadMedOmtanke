@@ -1,4 +1,5 @@
 ﻿using EmployeeLibary.Models;
+using EmployeeOverview.Classes;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -9,30 +10,45 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace EmployeeOverview
 {
+    enum ColorsForLog
+    {
+        Red =1,
+        Green =2,
+        Black=3
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
             FillDropdowns();
+            if (File.Exists(logFilePath))
+            {
+                UpdateLogList(ReadFile());
+            }
         }
+        string logFilePath = $"{Environment.CurrentDirectory}\\log\\EmployeeLog.txt";
 
         List<Employee> EmployeeListForStartup = new();
-        //List<Employee> EmployeeList;
         Employee Employee = new();
-        Position currentPosition = new();
-        Department currentDepartment = new();
         Dictionary<int, string> Department = new();
         Dictionary<int, string> Position = new();
         Dictionary<int, string> closestLeader = new();
         private static string _filename = string.Empty;
 
+        /// <summary>
+        /// Get Departments from database.
+        /// </summary>
+        /// <returns>Returns true if it can get the departments.</returns>
         private bool GetDepartments()
         {
             ReadDepartmentFromDatabase();
@@ -48,6 +64,10 @@ namespace EmployeeOverview
             return true;
         }
 
+        /// <summary>
+        /// Get positions from database.
+        /// </summary>
+        /// <returns>Returns true if it can get the positions.</returns>
         private bool GetPositions()
         {
             ReadPositionFromDatabase();
@@ -63,6 +83,10 @@ namespace EmployeeOverview
             return true;
         }
 
+        /// <summary>
+        /// Gets closest leader/manager and sort so you only can see those who are in the same department if there is a department selected.
+        /// </summary>
+        /// <returns>Returns true if it can get closest leader/manager.</returns>
         private bool GetClosestLeader()
         {
             if (EmployeeListForStartup.Count == 0)
@@ -74,33 +98,11 @@ namespace EmployeeOverview
                 }
             }
 
-            //if (DepartmentComboBox.SelectedItem != null && PositionComboBox.SelectedItem != null)
-            //{
-            //    closestLeader.Clear();
-            //    var listOfManagers = EmployeeListForStartup.Where(x => x.PositionName == PositionComboBox.SelectedItem.ToString() && x.DepartmentName == DepartmentComboBox.SelectedItem.ToString());
-            //    foreach (var employee in listOfManagers)
-            //    {
-            //        string nameAndPosition = $"{employee.Name} - {employee.PositionName} - {employee.DepartmentName}";
-            //        closestLeader.Add(employee.ID, nameAndPosition);
-            //    }
-            //}
-
-            //else if (PositionComboBox.SelectedItem != null)
-            //{
-            //    closestLeader.Clear();
-            //    var listOfManagers = EmployeeListForStartup.Where(x => x.PositionName == PositionComboBox.SelectedItem.ToString());
-            //    foreach (var employee in listOfManagers)
-            //    {
-            //        string nameAndPosition = $"{employee.Name} - {employee.PositionName} - {employee.DepartmentName}";
-            //        closestLeader.Add(employee.ID, nameAndPosition);
-            //    }
-            //}
-
             if (DepartmentComboBox.SelectedItem != null)
             {
                 closestLeader.Clear();
                 var listOfManagers = EmployeeListForStartup.Where(x => x.DepartmentID == Department.First(x => x.Value == DepartmentComboBox.SelectedItem.ToString()).Key);
-                listOfManagers = listOfManagers.Where(x => Position.First(y=> y.Key == x.PositionID).Value.Equals("Manager", StringComparison.OrdinalIgnoreCase));
+                listOfManagers = listOfManagers.Where(x => Position.First(y => y.Key == x.PositionID).Value.Equals("Manager", StringComparison.OrdinalIgnoreCase));
                 foreach (var employee in listOfManagers)
                 {
                     string nameAndPosition = $"{employee.Name} - {Position.First(x => x.Key == employee.PositionID).Value} - {Department.First(x => x.Key == employee.DepartmentID).Value}";
@@ -119,17 +121,6 @@ namespace EmployeeOverview
                     closestLeader.Add(employee.ID, nameAndPosition);
                 }
             }
-            //else if (DepartmentComboBox.SelectedItem == null && PositionComboBox.SelectedItem == null && closestLeader.Count == 0)
-            //{
-            //    closestLeader.Clear();
-            //    var listOfManagers = EmployeeListForStartup;
-            //    foreach (var employee in listOfManagers)
-            //    {
-            //        string nameAndPosition = $"{employee.Name} - {employee.PositionName} - {employee.DepartmentName}";
-            //        closestLeader.Add(employee.ID, nameAndPosition);
-            //    }
-            //}
-
 
             if (closestLeader.Count == 0)
             {
@@ -220,7 +211,7 @@ namespace EmployeeOverview
 
             if (postion.Equals("Manager", StringComparison.OrdinalIgnoreCase) && closestLeader.Equals("None", StringComparison.OrdinalIgnoreCase))
             {
-                closestLeader = "God";    //Need to find out what to put here.
+                closestLeader = "God";
             }
 
             if (closestLeader.Length == 0 || closestLeader == string.Empty || closestLeader == " " || closestLeader.Equals("None", StringComparison.OrdinalIgnoreCase))
@@ -239,6 +230,7 @@ namespace EmployeeOverview
             Employee.Initials = MakeInitials(Employee.Name);
             Employee.FirmEmail = MakeFirmMail(Employee.Name);
             WriteEmployeeToDataBase(Employee);
+            UpdateLogList(ReadFile());
             RestartPage();
         }
 
@@ -293,101 +285,52 @@ namespace EmployeeOverview
                 SkillsLabel.Content = "Skills";
             }
         }
-        private static string connectionString = "Data Source=10.130.54.82;Initial Catalog=MadMedOmtanke;User ID=casp103a;Password=1234";
 
+        DatabaseHandler database = new();
+
+        /// <summary>
+        /// Reads the employees to find the closet leader/manager.
+        /// </summary>
         private void ReadFromDataBaseEmpolyeeFromStartup()
         {
             EmployeeListForStartup = new();
-            using (SqlConnection connection = new(connectionString))
-            {
-                string Query = "SELECT [DepartmentID],[PositionID],[ClosetManager],[Name],[Location],[PositionName],[ID] FROM [dbo].[EmployeeViewToCreate]";
-
-                SqlCommand command = new(Query, connection);
-                connection.Open();
-
-                SqlDataReader dataReader = command.ExecuteReader();
-                while (dataReader.Read())
-                {
-                    EmployeeLibary.Models.Employee employee = new();
-                    employee.DepartmentID = dataReader.GetInt32(0);
-                    employee.PositionID = dataReader.GetInt32(1);
-                    employee.ClosetManager = dataReader.GetString(2);
-                    employee.Name = dataReader.GetString(3);
-                    currentDepartment.Location = dataReader.GetString(4);
-                    currentPosition.PositionName = dataReader.GetString(5);
-                    employee.ID = dataReader.GetInt32(6);
-                    EmployeeListForStartup.Add(employee);
-                }
-            }
+            database.ReadFromDataBaseEmpolyeeFromStartup(ref EmployeeListForStartup);
             return;
         }
 
+        /// <summary>
+        /// Reads the departments for the department dictionary.
+        /// </summary>
         private void ReadDepartmentFromDatabase()
         {
-            using (SqlConnection connection = new(connectionString))
-            {
-                string Query = "SELECT [ID],[Location] FROM [dbo].[DepartmentView]";
-
-                SqlCommand command = new(Query, connection);
-                connection.Open();
-
-                SqlDataReader dataReader = command.ExecuteReader();
-                while (dataReader.Read())
-                {
-                    Department department = new();
-                    department.ID = dataReader.GetInt32(0);
-                    department.Location = dataReader.GetString(1);
-                    Department.Add(department.ID, department.Location);
-
-                }
-            }
+            database.ReadDepartmentFromDatabase(ref Department);
             return;
         }
 
+        /// <summary>
+        /// Reads the positions for the position dictionary.
+        /// </summary>
         private void ReadPositionFromDatabase()
         {
-            using (SqlConnection connection = new(connectionString))
-            {
-                string Query = "SELECT [ID],[PositionName] FROM [dbo].[PositionView]";
-
-                SqlCommand command = new(Query, connection);
-                connection.Open();
-
-                SqlDataReader dataReader = command.ExecuteReader();
-                while (dataReader.Read())
-                {
-                    Position position = new();
-                    position.ID = dataReader.GetInt32(0);
-                    position.PositionName = dataReader.GetString(1);
-                    Position.Add(position.ID, position.PositionName);
-                }
-            }
+            database.ReadPositionFromDatabase(ref Position);
             return;
         }
 
+        /// <summary>
+        /// Write the employee to the database.
+        /// </summary>
+        /// <param name="employee">The employee that need to be added.</param>
         private void WriteEmployeeToDataBase(Employee employee)
         {
-            int isAdded = 0;
-            using (SqlConnection conn = new(connectionString))
-            {
-                string Query = $"EXEC @return_value =  [dbo].[CreateEmployee] @Initials = '{employee.Initials}',@Name = '{employee.Name}',@Address = '{employee.Address}',@TlfNr = '{employee.TlfNr}',@FirmEmail = '{employee.FirmEmail}',@PositionID = '{employee.PositionID}',@DepartmentID = '{employee.DepartmentID}',@ClosetManager = '{employee.ClosetManager}',@Skills = '{employee.Skills}'";
-                SqlParameter returnValue = new SqlParameter("return_value", SqlDbType.Int);
-                returnValue.Direction = ParameterDirection.Output;
-                SqlCommand command = new(Query, conn);
-                command.Parameters.Add(returnValue);
-                conn.Open();
-                command.ExecuteNonQuery();
-                isAdded = (int)returnValue.Value;
-                conn.Close();
-            }
+            int isAdded = database.WriteEmployeeToDataBase(employee);
 
             if (isAdded == 1)
             {
-                Log($"Employee {employee.Name} was added to database", "Green");
+                Log($"Employee {employee.Name} was added to database", ColorsForLog.Green);
             }
             else if (isAdded <= 0)
             {
-                Log($"Employee {employee.Name} wasn't added to database", "Red");
+                Log($"Employee {employee.Name} wasn't added to database", ColorsForLog.Red);
             }
         }
 
@@ -416,6 +359,11 @@ namespace EmployeeOverview
             return Result;
         }
 
+        /// <summary>
+        /// Make the initials from the name.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>returns initials in uppercase.</returns>
         private string MakeInitials(string name)
         {
             if (name == null || name == string.Empty)
@@ -446,17 +394,30 @@ namespace EmployeeOverview
             return initials.ToUpper();
         }
 
+        /// <summary>
+        /// Make the frim mail
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>returns the mail.</returns>
         private string MakeFirmMail(string name)
         {
             var nameSpilt = name.Split(" ");
             return $"{name.ToCharArray()[0]}{nameSpilt[nameSpilt.Length - 1]}@MadMedOmtanke.dk";
         }
 
+        /// <summary>
+        /// Emptys the you select the closet manager/leader.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ClosestLeaderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ClosestLeaderLabel.Content = string.Empty;
         }
 
+        /// <summary>
+        /// Reset the everthing to do with creating a employee.
+        /// </summary>
         private void RestartPage()
         {
             PositionComboBox.SelectedIndex = -1;
@@ -470,25 +431,92 @@ namespace EmployeeOverview
             AddressTextBox.Text = string.Empty;
             SkillsTextBox.Text = string.Empty;
         }
-        private void Log(string LogMessage, string color)
+
+        /// <summary>
+        /// Used to write a log in the log file.
+        /// </summary>
+        /// <param name="LogMessage">The thing you what to write down.</param>
+        /// <param name="color">Is color that the log needs to be.</param>
+        private void Log(string LogMessage, ColorsForLog color)
         {
-            string filecontent = string.Empty;
-            string filepath = $"{Environment.CurrentDirectory}\\log\\EmployeeLog.txt";
-            if (!Directory.Exists(filepath))
+            List<string> filecontent = new();
+            if (!Directory.Exists(logFilePath))
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(filepath));
+                Directory.CreateDirectory(Path.GetDirectoryName(logFilePath));
             }
-            
+
             DateTime dateTime = DateTime.Now;
-            LogMessage += $"  ;{color};  {dateTime.ToString("dd/MMM/yyyy  HH:mm")} \n";
-            if (File.Exists(filepath))
+            LogMessage = $"{(int)color}; {LogMessage}; {dateTime.ToString("dd/MMM/yyyy")} \n";
+            if (File.Exists(logFilePath))
             {
-                filecontent = File.ReadAllText(filepath);
+                filecontent = ReadFile();
             }
-            filecontent += LogMessage;
-            File.WriteAllText(filepath, filecontent);
+            filecontent.Add(LogMessage);
+            File.WriteAllLines(logFilePath, filecontent);
         }
 
+        /// <summary>
+        /// Reads the file at converts it into a list
+        /// </summary>
+        /// <returns>Returns a list of string containing all the lines from the file.</returns>
+        private List<string> ReadFile()
+        {
+            List<string> filecontent = new();
+            filecontent = File.ReadAllLines(logFilePath).ToList();
+            filecontent = filecontent.Where(x => x != string.Empty).ToList();
+            return filecontent;
+        }
+
+        /// <summary>
+        /// Clears the log view and make a marking in the file that is have been cleared.
+        /// </summary>
+        private void ClearLog()
+        {
+            File.AppendAllText(logFilePath, "Cleared\n");
+            LogMenuListView.Items.Clear();
+        }
+
+        /// <summary>
+        /// Updates the log view in the menu with latest logings by looking at the markings in the file.
+        /// </summary>
+        /// <param name="filecontent"></param>
+        private void UpdateLogList(List<string> filecontent)
+        {
+            if (filecontent.Any(x => x.Contains("Cleared")))
+            {
+                int lastindex = filecontent.LastIndexOf("Cleared");
+                for (int i = lastindex; i >= 0; i--)
+                {
+                    filecontent.RemoveAt(i);
+                }
+            }
+            foreach (var line in filecontent)
+            {
+                ColorsForLog color = (ColorsForLog)Convert.ToInt32(line.Split(";")[0].Trim());
+                switch (color)
+                {
+                    case ColorsForLog.Red:
+                        LogMenuListView.Foreground = Brushes.Red;
+                        break;
+                    case ColorsForLog.Green:
+                        LogMenuListView.Foreground = Brushes.Green;
+                        break;
+                    case ColorsForLog.Black:
+                        LogMenuListView.Foreground = Brushes.Black;
+                        break;
+                    default:
+                        LogMenuListView.Foreground = Brushes.Black;
+                        break;
+                }
+                LogMenuListView.Items.Add(line.Split(";")[1].Trim());
+            }
+        }
+
+        /// <summary>
+        /// Browse for the csv file that needs to be converted into employees.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BrowseFileMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog();
@@ -501,15 +529,19 @@ namespace EmployeeOverview
             if (result == true)
             {
                 _filename = dialog.FileName;
-                //FileNameLabel.Content = Path.GetFileName(_filename);
             }
         }
 
+        /// <summary>
+        /// Adds employees to the database with the file that have been selected from the file menu.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddEmployeeMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (_filename == string.Empty)
             {
-                MessageBox.Show("Please select a file","Error",MessageBoxButton.OK,MessageBoxImage.Error);
+                MessageBox.Show("Please select a file", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (!File.Exists(_filename))
@@ -531,9 +563,7 @@ namespace EmployeeOverview
                 employee.Name = spiltLine[0].Trim();
                 employee.TlfNr = spiltLine[1].Trim();
                 employee.Address = spiltLine[2].Trim();
-                //employee.PositionName = spiltLine[3].Trim();
                 employee.PositionID = Position.First(x => x.Value == spiltLine[3].Trim()).Key;
-                //employee.DepartmentName = spiltLine[4].Trim();
                 employee.DepartmentID = Department.First(x => x.Value == spiltLine[4].Trim()).Key;
                 employee.ClosetManager = spiltLine[5].Trim();
                 employee.Skills = spiltLine[6].Trim();
@@ -541,7 +571,14 @@ namespace EmployeeOverview
                 employee.Initials = MakeInitials(employee.Name);
                 WriteEmployeeToDataBase(employee);
             }
-            MessageBox.Show("Button clicked","Succes",MessageBoxButton.OK,MessageBoxImage.Information);
+            UpdateLogList(ReadFile());
+            MessageBox.Show("Button clicked", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void LogClearMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ClearLog();
+            MessageBox.Show("Log is cleared", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

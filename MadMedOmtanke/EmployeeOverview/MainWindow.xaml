@@ -31,7 +31,12 @@
                 <MenuItem x:Name="BrowseFileMenuItem" Header="Browse/Select File" Click="BrowseFileMenuItem_Click"/>
                 <MenuItem x:Name="AddEmployeeMenuItem" Header="Add Employees" Click="AddEmployeeMenuItem_Click"/>
             </MenuItem>
-            <MenuItem x:Name="LogMenuItem" Header="Log" Height="25" Width="35"/>
+            <MenuItem x:Name="LogMenuItem" Header="Log" Height="25" Width="35">
+                <MenuItem x:Name="ShowLogMenuItem" Header="Show log">
+                    <ListView x:Name="LogMenuListView" IsHitTestVisible="False"/>
+                </MenuItem>
+                <MenuItem x:Name="LogClearMenuItem" Header="Clear log" Click="LogClearMenuItem_Click"></MenuItem>
+            </MenuItem>
         </Menu>
     </Grid>
 </Window>
