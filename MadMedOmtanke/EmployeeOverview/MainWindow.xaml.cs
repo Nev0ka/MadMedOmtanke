@@ -432,6 +432,7 @@ namespace EmployeeOverview
             SkillsTextBox.Text = string.Empty;
         }
 
+        Logging logging = new();
         /// <summary>
         /// Used to write a log in the log file.
         /// </summary>
@@ -439,20 +440,7 @@ namespace EmployeeOverview
         /// <param name="color">Is color that the log needs to be.</param>
         private void Log(string LogMessage, ColorsForLog color)
         {
-            List<string> filecontent = new();
-            if (!Directory.Exists(logFilePath))
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(logFilePath));
-            }
-
-            DateTime dateTime = DateTime.Now;
-            LogMessage = $"{(int)color}; {LogMessage}; {dateTime.ToString("dd/MMM/yyyy")} \n";
-            if (File.Exists(logFilePath))
-            {
-                filecontent = ReadFile();
-            }
-            filecontent.Add(LogMessage);
-            File.WriteAllLines(logFilePath, filecontent);
+            logging.Log(LogMessage, color);
         }
 
         /// <summary>
@@ -461,10 +449,7 @@ namespace EmployeeOverview
         /// <returns>Returns a list of string containing all the lines from the file.</returns>
         private List<string> ReadFile()
         {
-            List<string> filecontent = new();
-            filecontent = File.ReadAllLines(logFilePath).ToList();
-            filecontent = filecontent.Where(x => x != string.Empty).ToList();
-            return filecontent;
+            return logging.ReadFile();
         }
 
         /// <summary>
@@ -472,7 +457,7 @@ namespace EmployeeOverview
         /// </summary>
         private void ClearLog()
         {
-            File.AppendAllText(logFilePath, "Cleared\n");
+            logging.ClearLog();
             LogMenuListView.Items.Clear();
         }
 
@@ -482,14 +467,7 @@ namespace EmployeeOverview
         /// <param name="filecontent"></param>
         private void UpdateLogList(List<string> filecontent)
         {
-            if (filecontent.Any(x => x.Contains("Cleared")))
-            {
-                int lastindex = filecontent.LastIndexOf("Cleared");
-                for (int i = lastindex; i >= 0; i--)
-                {
-                    filecontent.RemoveAt(i);
-                }
-            }
+            filecontent = logging.UpdateLogList(filecontent);
             foreach (var line in filecontent)
             {
                 ColorsForLog color = (ColorsForLog)Convert.ToInt32(line.Split(";")[0].Trim());
