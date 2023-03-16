@@ -381,7 +381,9 @@ namespace EmployeeOverview
             }
 
             string[] names = name.Split(" ");
-            initials += $"{GetTwoFirstLetters(names[0])}{GetTwoFirstLetters(names[names.Length - 1])}";
+            //initials += $"{GetTwoFirstLetters(names[0])}{GetTwoFirstLetters(names[names.Length - 1])}";
+            string lastname = names[names.Length - 1];
+            initials += $"{names[0].Substring(0, 1)}{lastname.Substring(0, 3)}";
 
             return initials.ToUpper();
         }
