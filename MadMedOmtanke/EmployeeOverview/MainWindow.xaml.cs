@@ -14,13 +14,6 @@ using System.Windows.Media;
 
 namespace EmployeeOverview
 {
-    enum ColorsForLog
-    {
-        Red =1,
-        Green =2,
-        Black=3
-    }
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -325,11 +318,11 @@ namespace EmployeeOverview
 
             if (isAdded == 1)
             {
-                Log($"Employee {employee.Name} was added to database", ColorsForLog.Green);
+                Log($"Employee {employee.Name} was added to database");
             }
             else if (isAdded <= 0)
             {
-                Log($"Employee {employee.Name} wasn't added to database", ColorsForLog.Red);
+                Log($"Employee {employee.Name} wasn't added to database");
             }
         }
 
@@ -437,9 +430,9 @@ namespace EmployeeOverview
         /// </summary>
         /// <param name="LogMessage">The thing you what to write down.</param>
         /// <param name="color">Is color that the log needs to be.</param>
-        private void Log(string LogMessage, ColorsForLog color)
+        private void Log(string LogMessage)
         {
-            logging.Log(LogMessage, color);
+            logging.Log(LogMessage);
         }
 
         /// <summary>
@@ -469,23 +462,7 @@ namespace EmployeeOverview
             filecontent = logging.UpdateLogList(filecontent);
             foreach (var line in filecontent)
             {
-                ColorsForLog color = (ColorsForLog)Convert.ToInt32(line.Split(";")[0].Trim());
-                switch (color)
-                {
-                    case ColorsForLog.Red:
-                        LogMenuListView.Foreground = Brushes.Red;
-                        break;
-                    case ColorsForLog.Green:
-                        LogMenuListView.Foreground = Brushes.Green;
-                        break;
-                    case ColorsForLog.Black:
-                        LogMenuListView.Foreground = Brushes.Black;
-                        break;
-                    default:
-                        LogMenuListView.Foreground = Brushes.Black;
-                        break;
-                }
-                LogMenuListView.Items.Add(line.Split(";")[1].Trim());
+                LogMenuListView.Items.Add(line.Split(";")[0].Trim());
             }
         }
 
@@ -549,7 +526,7 @@ namespace EmployeeOverview
                 WriteEmployeeToDataBase(employee);
             }
             UpdateLogList(ReadFile());
-            MessageBox.Show("Button clicked", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Button clicked", "Infomation", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void LogClearMenuItem_Click(object sender, RoutedEventArgs e)

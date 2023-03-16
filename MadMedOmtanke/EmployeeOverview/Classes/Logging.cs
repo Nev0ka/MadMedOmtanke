@@ -19,7 +19,7 @@ namespace EmployeeOverview.Classes
         /// </summary>
         /// <param name="LogMessage">The thing you what to write down.</param>
         /// <param name="color">Is color that the log needs to be.</param>
-        internal void Log(string LogMessage, ColorsForLog color)
+        internal void Log(string LogMessage)
         {
             List<string> filecontent = new();
             if (!Directory.Exists(logFilePath))
@@ -28,7 +28,7 @@ namespace EmployeeOverview.Classes
             }
 
             DateTime dateTime = DateTime.Now;
-            LogMessage = $"{(int)color}; {LogMessage}; {dateTime.ToString("dd/MMM/yyyy")} \n";
+            LogMessage = $"{LogMessage}; {dateTime.ToString("dd/MMM/yyyy")} \n";
             if (File.Exists(logFilePath))
             {
                 filecontent = ReadFile();
